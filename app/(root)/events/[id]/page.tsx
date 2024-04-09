@@ -1,19 +1,19 @@
-import CheckoutButton from "@/components/shared/CheckoutButton";
-import Collection from "@/components/shared/Collection";
+import { SearchParamProps } from "@/types";
 import {
   getEventById,
   getRelatedEventsByCategory,
 } from "@/lib/actions/event.actions";
-import { formatDateTime } from "@/lib/utils";
-import { SearchParamProps } from "@/types";
 import Image from "next/image";
+import { formatDateTime } from "@/lib/utils";
+import CheckoutButton from "@/components/shared/CheckoutButton";
+import { useSearchParams } from "next/navigation";
+import Collection from "@/components/shared/Collection";
 
 const EventDetails = async ({
   params: { id },
   searchParams,
 }: SearchParamProps) => {
   const event = await getEventById(id);
-
   const relatedEvents = await getRelatedEventsByCategory({
     categoryId: event.category._id,
     eventId: event._id,
@@ -22,14 +22,14 @@ const EventDetails = async ({
 
   return (
     <>
-      <section className="flex justify-center bg-primary-50 bg-dotted-pattern bg-contain">
-        <div className="grid grid-cols-1 md:grid-cols-2 2xl:max-w-7xl">
+      <section className="flex justify-center  bg-primary-50 bg-dotted-pattern bg-contain">
+        <div className="grid grid-cols-1 md:grid-cols-1 2xl:max-w-7xl">
           <Image
             src={event.imageUrl}
             alt="hero image"
             width={1000}
             height={1000}
-            className="h-full min-h-[300px] object-cover object-center"
+            className="h-full min-h-[300px] max-h-[500px] object-cover object-center"
           />
 
           <div className="flex w-full flex-col gap-8 p-5 md:p-10">
@@ -47,13 +47,15 @@ const EventDetails = async ({
                 </div>
 
                 <p className="p-medium-18 ml-2 mt-2 sm:mt-0">
-                  by{" "}
+                  Organizer:{" "}
                   <span className="text-primary-500">
                     {event.organizer.firstName} {event.organizer.lastName}
                   </span>
                 </p>
               </div>
             </div>
+
+            {/* CHECKOUT BUTTON */}
 
             <CheckoutButton event={event} />
 
@@ -67,16 +69,15 @@ const EventDetails = async ({
                 />
                 <div className="p-medium-16 lg:p-regular-20 flex flex-wrap items-center">
                   <p>
-                    {formatDateTime(event.startDateTime).dateOnly} -{" "}
+                    Start Date: {formatDateTime(event.startDateTime).dateOnly} -{" "}
                     {formatDateTime(event.startDateTime).timeOnly}
                   </p>
                   <p>
-                    {formatDateTime(event.endDateTime).dateOnly} -{" "}
+                    End Date: {formatDateTime(event.endDateTime).dateOnly} -{" "}
                     {formatDateTime(event.endDateTime).timeOnly}
                   </p>
                 </div>
               </div>
-
               <div className="p-regular-20 flex items-center gap-3">
                 <Image
                   src="/assets/icons/location.svg"
@@ -89,7 +90,7 @@ const EventDetails = async ({
             </div>
 
             <div className="flex flex-col gap-2">
-              <p className="p-bold-20 text-grey-600">What You'll Learn:</p>
+              <p className="p-bold-20 text-grey-600">About this event:</p>
               <p className="p-medium-16 lg:p-regular-18">{event.description}</p>
               <p className="p-medium-16 lg:p-regular-18 truncate text-primary-500 underline">
                 {event.url}
